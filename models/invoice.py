@@ -6,3 +6,6 @@ class Invoice(Base):
     buyer_id = Column(Integer, ForeignKey("buyer.id"), nullable=False)
     due_date = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
+    invoice_number = Column(String, unique=True, nullable=False)
+    currency = Column(String(3), nullable=False)
+    status = Column(String, default="draft", nullable=False)
