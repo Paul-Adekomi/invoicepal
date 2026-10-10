@@ -10,7 +10,6 @@ class ItemCreate(BaseModel):
 
 class InvoiceCreate(BaseModel):
     buyer_id: int
-    invoice_number: str
     due_date: date | None = None
     items: list[ItemCreate]
     currency: Literal["NGN", "USD"]
