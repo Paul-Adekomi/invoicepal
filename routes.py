@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from sqlalchemy.exc import IntegrityError
 from schemas import InvoiceCreate
 from database import SessionLocal
 from models.invoice import Invoice
@@ -20,6 +21,17 @@ def create_invoice(invoice: InvoiceCreate):
         db.commit()    
 
         return {"id":new_invoice.id, "invoice_number":new_invoice.invoice_number}
+    except IntegrityError as e:   
+        print(e)
+        db.rollback()
+        message = str(e.orig)
+
+        if "invoice_number" in message:
+            raise HTTPException(status_code=409, detail="Invoice number already exists!")
+        elif "buyer_id" in message:
+            raise HTTPException(status_code=409, detail="Buyer does not exist")   
+        else:     
+            raise HTTPException(status_code=409, detail="Invoice conflicts with existing data")
     except Exception as e:
         print(e)
         db.rollback()
