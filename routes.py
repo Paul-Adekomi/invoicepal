@@ -43,3 +43,14 @@ def create_invoice(invoice: InvoiceCreate):
     finally:
         db.close()
 
+@router.get("/invoices/{invoice_id}")
+def get_invoice(invoice_id: int):
+    db = SessionLocal()
+    try:
+        invoice = db.query(Invoice).filter(Invoice.id == invoice_id).first()
+        if invoice is None:
+            raise HTTPException(status_code=404, detail="Invoice not found!")
+        items = db.query(Item).filter(Item.invoice_id == invoice_id).all()    
+        return {"found" : True}
+    finally:
+        db.close()
