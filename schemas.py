@@ -3,13 +3,22 @@ from decimal import Decimal
 from typing import Literal
 from datetime import date
 
+
 class ItemCreate(BaseModel):
     description: str
     quantity: int = Field(gt=0)
     unit_price: Decimal
+
 
 class InvoiceCreate(BaseModel):
     buyer_id: int
     due_date: date | None = None
     items: list[ItemCreate]
     currency: Literal["NGN", "USD"]
+
+
+class BuyerCreate(BaseModel):
+    name: str
+    email: str
+    address: str | None = None
+    phone: str | None = None

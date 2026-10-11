@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.exc import IntegrityError
-from schemas import InvoiceCreate
+from schemas import InvoiceCreate, BuyerCreate
 from database import SessionLocal
 from models.invoice import Invoice
 from models.item import Item
+from models.buyer import Buyer
 import uuid
 
 router = APIRouter()
@@ -13,6 +14,7 @@ router = APIRouter()
 def create_invoice(invoice: InvoiceCreate):
     db = SessionLocal()
     temp_num = str(uuid.uuid4())
+
     try:
         new_invoice = Invoice(
             buyer_id=invoice.buyer_id,
@@ -89,5 +91,27 @@ def get_invoice(invoice_id: int):
             "items": list_of_items,
             "total": total,
         }
+    finally:
+        db.close()
+
+
+@router.post("/buyers", status_code=201)
+def create_buyer(buyer: BuyerCreate):
+    db = SessionLocal()
+    try:
+        new_buyer = Buyer(
+            name=buyer.name,
+            email=buyer.email,
+            address=buyer.address,
+            phone=buyer.phone
+        )
+        db.add(new_buyer)
+        db.commit()
+
+        return {"id": new_buyer.id, "name": new_buyer.name}
+    except Exception as e:
+        print(e)
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Could not create buyer")
     finally:
         db.close()

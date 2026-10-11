@@ -1,5 +1,7 @@
 from database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
+
+
 class Invoice(Base):
     __tablename__ = "invoice"
     id = Column(Integer, primary_key=True, autoincrement=True)
