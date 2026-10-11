@@ -80,7 +80,7 @@ def get_invoice(invoice_id: int):
             )
         total = 0
         for item in items:
-            total = item.quantity * item.unit_price
+            total += item.quantity * item.unit_price
         return {
             "id": invoice.id,
             "invoice_number": invoice.invoice_number,
